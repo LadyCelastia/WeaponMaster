@@ -1,5 +1,5 @@
 # WeaponMaster
-All-in-one weapon system
+All-in-one weapon system (All ModuleScripts)
 
 HitboxMaster module: https://pastebin.com/PPS0n1kL
 

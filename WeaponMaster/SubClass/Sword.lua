@@ -17,14 +17,15 @@ sword.new = function()
 	function self:Initiate()
 		self:TransferComboAnimations(self)
 		self:TransferHeavyAnimation(self)
+		if self.Owner ~= nil then
+			self.OwnerCharacterStats = self.Owner:FindFirstChild("CharacterStats")
+			if self.OwnerCharacterStats then
+				self.CanParryValue = self.OwnerCharacterStats:FindFirstChild("CanParry")
+			end
+		end
 	end
 	
 	return self
-end
-
--- Wrappers
-function sword:GetComposites()
-	return sword.Composites or {}
 end
 
 return sword

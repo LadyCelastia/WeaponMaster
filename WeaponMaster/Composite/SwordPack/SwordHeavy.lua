@@ -71,7 +71,11 @@ SwordHeavy.new = function(fields : {any?}?)
 					this.CanAttack = true
 				end)
 				
-				this.AnimationTracks["HeavyAttack"]:Play()
+				if this.Player ~= nil then
+					this.WeaponRemote:FireClient(this.Player, "PlayAnimation", "HeavyAttack")
+				else
+					-- WIP
+				end
 				if currentStats["SelfStun"] ~= nil then
 					task.spawn(this.ApplyStatus, this, "Stun", this.Owner, {
 						["SlowFactor"] = currentStats["SelfStun"]["SlowFactor"] or 0,

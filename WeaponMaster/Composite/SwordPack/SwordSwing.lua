@@ -14,7 +14,7 @@ local swings = {
 			["SlowFactor"] = 0.5
 		},
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14412068951",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -145,7 +145,6 @@ SwordSwing.new = function(fields : {any?}?)
 		if this.Owner ~= nil and this.CanAttack == true then
 			if this.Owner:FindFirstChild("Stun") == nil then
 				this.CanAttack = false
-				local currentAnim = this.AnimationTracks["Swing" .. this.CurrentCombo]
 				local currentStats = this.Combo[this.CurrentCombo]
 				
 				local realDuration = (currentStats["Duration"] or 1) + (currentStats["EndLag"] or 0)
@@ -158,7 +157,11 @@ SwordSwing.new = function(fields : {any?}?)
 					this.CanAttack = true
 				end)
 				
-				currentAnim:Play()
+				if this.Player ~= nil then
+					this.WeaponRemote:FireClient(this.Player, "PlayAnimation", "Swing" .. this.CurrentCombo)
+				else
+					-- WIP
+				end
 				if currentStats["SelfStun"] ~= nil then
 					task.spawn(this.ApplyStatus, this, "Stun", this.Owner, {
 						["SlowFactor"] = currentStats["SelfStun"]["SlowFactor"] or 0,

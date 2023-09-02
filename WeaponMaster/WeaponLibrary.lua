@@ -4,7 +4,7 @@
 --]]
 
 local library = {
-	["HeavySword"] = {
+	["NewSword"] = {
 		["SubClass"] = "Sword",
 		["Fields"] = {
 			["Weapon"] = {

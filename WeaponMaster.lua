@@ -3,6 +3,11 @@
     WeaponMaster object-oriented inheritance-composition-wrapper hybrid weapon system
 --]]
 
+local RunService = game:GetService("RunService")
+if RunService:IsClient() == true then
+	return require(script:WaitForChild("AnimationLoader"))
+end
+
 local WeaponMaster = {}
 WeaponMaster.__index = WeaponMaster
 
@@ -23,12 +28,22 @@ end
 local Composite = script:WaitForChild("Composite")
 local StatusEffects = require(script:WaitForChild("StatusEffects"))
 local Patriarch = require(script:WaitForChild("Weapon"))
-local AnimationLoader = require(script:WaitForChild("AnimationLoader"))
 local WeaponLibrary = require(script:WaitForChild("WeaponLibrary"))
+local AnimationLoader = require(script:WaitForChild("AnimationLoader"))
 
-local ServerStorage = game:WaitForChild("ServerStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local LoadAnimation = Remotes:WaitForChild("LoadAnimation")
+local ReplicatedModules = ReplicatedStorage:WaitForChild("Modules")
+local SafeInvoke = require(ReplicatedModules:WaitForChild("SafeInvoke"))
+
+local ServerStorage = game:GetService("ServerStorage")
 local ServerModules = ServerStorage:WaitForChild("Modules")
 local HitboxMaster = require(ServerModules:WaitForChild("HitboxMaster"))
+local ServerValues = ServerStorage:WaitForChild("Values")
+local WeaponSerial = ServerValues:WaitForChild("WeaponSerial")
+
+local Players = game:GetService("Players")
 
 WeaponMaster.Compose = function(Object : {any?}, Component : {any?}, Override : boolean?)
 	for i,v in pairs(Component) do
@@ -54,6 +69,11 @@ end
 WeaponMaster.new = function(Character : Model, Object : string, Fields : {any?})
 	if SubClass:FindFirstChild(Object) then
 		Fields = Fields or {}
+		WeaponSerial.Value += 1
+		Fields["Weapon"]["Serial"] = WeaponSerial.Value
+		Fields["Weapon"]["SubClass"] = Object
+		Fields["Weapon"]["Owner"] = Character
+		Fields["Weapon"]["Player"] = Players:GetPlayerFromCharacter(Character)
 		-- Creation of sub-class object
 		local module = WeaponObjects(Object)
 		local self = setmetatable(module.new(), WeaponMaster)
@@ -82,7 +102,6 @@ WeaponMaster.new = function(Character : Model, Object : string, Fields : {any?})
 		self = WeaponMaster.BulkCompose(self, Composition, true)
 		
 		-- Initiation of sub-class object
-		self.Type = Object
 		self.HitboxMaster = HitboxMaster
 		self:Initiate()
 		
@@ -93,10 +112,8 @@ WeaponMaster.new = function(Character : Model, Object : string, Fields : {any?})
 		for i,v in pairs(self.Animations) do
 			Animations[i] = v.Animation
 		end
-		self.AnimationTracks = AnimationLoader.BulkLoad(Animations, Character, AnimFolder)
-		
-		
-		-- Enable sub-class functionalities
+		self["RawAnimations"] = AnimationLoader.BulkPrep(Animations, Character, AnimFolder)
+		self["RawAnimationInfo"] = Animations
 		
 		return self
 	end
@@ -107,9 +124,14 @@ end
 WeaponMaster.newFromLibrary = function(Character : Model, Name : string)
 	local result = WeaponLibrary("find", Name)
 	if result ~= nil then
-		return WeaponMaster.new(Character, result["SubClass"], result["Fields"])
+		local fields = result["Fields"]
+		return WeaponMaster.new(Character, result["SubClass"], fields)
 	end
 	return {}
+end
+
+WeaponMaster.SafeDestroy = function(self) -- Completely remove a weapon safely from a weapon object
+	-- WIP
 end
 
 return WeaponMaster

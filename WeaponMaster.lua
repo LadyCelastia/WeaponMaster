@@ -26,7 +26,6 @@ for _,v in ipairs(SubClass:GetChildren()) do
 end
 
 local Composite = script:WaitForChild("Composite")
-local StatusEffects = require(script:WaitForChild("StatusEffects"))
 local Patriarch = require(script:WaitForChild("Weapon"))
 local WeaponLibrary = require(script:WaitForChild("WeaponLibrary"))
 local AnimationLoader = require(script:WaitForChild("AnimationLoader"))
@@ -57,8 +56,9 @@ end
 
 WeaponMaster.BulkCompose = function(Object : {any?}, Composition : {{any}}, Override : boolean?)
 	for _,v in ipairs(Composition) do
-		if Composite:FindFirstChild(v[1]) then
-			local self = require(Composite[v[1]])
+		local target = Composite:FindFirstChild(v[1], true)
+		if target ~= nil then
+			local self = require(target)
 			Object = WeaponMaster.Compose(Object, self.new(v[2] or {}), Override or false)
 		end
 	end
@@ -89,7 +89,7 @@ WeaponMaster.new = function(Character : Model, Object : string, Fields : {any?})
 				if Class:IsA("Folder") then
 					for _,v2 in pairs(Class:GetChildren()) do
 						if v2:IsA("ModuleScript") then
-							table.insert(Composition, {v2, Fields[v2] or {}})
+							table.insert(Composition, {v2.Name, Fields[v2.Name] or {}})
 						end
 					end
 				elseif Class:IsA("ModuleScript") then
@@ -103,7 +103,7 @@ WeaponMaster.new = function(Character : Model, Object : string, Fields : {any?})
 		
 		-- Initiation of sub-class object
 		self.HitboxMaster = HitboxMaster
-		self:Initiate()
+		self:Initiate(self)
 		
 		-- Load animations
 		local AnimFolder = Character:FindFirstChild("Animations") or Instance.new("Folder", Character)
@@ -114,6 +114,7 @@ WeaponMaster.new = function(Character : Model, Object : string, Fields : {any?})
 		end
 		self["RawAnimations"] = AnimationLoader.BulkPrep(Animations, Character, AnimFolder)
 		self["RawAnimationInfo"] = Animations
+		--self:ReplicateAnimations(self)
 		
 		return self
 	end

@@ -14,13 +14,13 @@ sword.new = function()
 	self.Blade = nil
 	self.HitboxAttachment = nil
 	
-	function self:Initiate()
-		self:TransferComboAnimations(self)
-		self:TransferHeavyAnimation(self)
-		if self.Owner ~= nil then
-			self.OwnerCharacterStats = self.Owner:FindFirstChild("CharacterStats")
-			if self.OwnerCharacterStats then
-				self.CanParryValue = self.OwnerCharacterStats:FindFirstChild("CanParry")
+	function self:Initiate(this)
+		this:TransferComboAnimations(this)
+		this:TransferHeavyAnimation(this)
+		if this.Owner ~= nil then
+			this.OwnerCharacterStats = this.Owner:FindFirstChild("CharacterStats")
+			if this.OwnerCharacterStats then
+				this.CanParryValue = this.OwnerCharacterStats:FindFirstChild("CanParry")
 			end
 		end
 	end

@@ -6,7 +6,7 @@
 local animations = {
 	["Block"] = {
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789810356",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -17,7 +17,7 @@ local animations = {
 	},
 	["Parry"] = {
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789810356",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -28,7 +28,7 @@ local animations = {
 	},
 	["Idle"] = {
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789810356",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -39,7 +39,7 @@ local animations = {
 	},
 	["Walk"] = {
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789819202",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -50,7 +50,7 @@ local animations = {
 	},
 	["Run"] = {
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789825228",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -70,6 +70,22 @@ SwordAnimations.new = function(fields : {any?}?)
 	local self = setmetatable({}, SwordAnimations)
 	
 	self.Animations = animations
+	
+	function self:PlayAnimation(this, anim)
+		if this.Player ~= nil then
+			this.WeaponRemote:FireClient(this.Player, "PlayAnimation", anim)
+		else
+			-- WIP (server animation)
+		end
+	end
+	
+	function self:StopAnimation(this, anim)
+		if this.Player ~= nil then
+			this.WeaponRemote:FireClient(this.Player, "StopAnimation", anim)
+		else
+			-- WIP (server animation)
+		end
+	end
 	
 	return self
 end

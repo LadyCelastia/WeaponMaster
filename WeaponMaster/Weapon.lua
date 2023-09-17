@@ -29,7 +29,7 @@ weapon.new = function(fields : {any?}?)
 	self.WeaponRemote = fields["WeaponRemote"] or {}
 	
 	self.DamageBindable = Bindables:WaitForChild("DamageEvent")
-	self.StatusEffect = Bindables:WaitForChild("StatusEffect")
+	self.StatusEffectBindable = Bindables:WaitForChild("StatusEffect")
 	self.LoadAnimation = Remotes:WaitForChild("LoadAnimation")
 	
 	function self:Destroy(this) -- only removes weapon object

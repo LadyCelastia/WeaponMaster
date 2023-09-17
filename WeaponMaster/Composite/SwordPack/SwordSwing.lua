@@ -6,15 +6,15 @@
 local swings = {
 	[1] = {
 		["Damage"] = 10,
-		["Duration"] = 1.6,
+		["Duration"] = 1,
 		["HitboxStartLag"] = 0.3,
 		["HitboxEndLag"] = -0.2,
 		["EndLag"] = -0.1,
 		["SelfStun"] = {
-			["SlowFactor"] = 0.5
+			["SlowFactor"] = 0.25
 		},
 		["Animation"] = {
-			["ID"] = "rbxassetid://14412068951",
+			["ID"] = "rbxassetid://14789877241",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0,
@@ -29,15 +29,15 @@ local swings = {
 	},
 	[2] = {
 		["Damage"] = 10,
-		["Duration"] = 1.6,
+		["Duration"] = 1,
 		["HitboxStartLag"] = 0.3,
 		["HitboxEndLag"] = -0.2,
 		["EndLag"] = -0.1,
 		["SelfStun"] = {
-			["SlowFactor"] = 0.5
+			["SlowFactor"] = 0.25
 		},
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789881851",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0
@@ -53,13 +53,13 @@ local swings = {
 		["Damage"] = 8,
 		["Duration"] = 1.2,
 		["HitboxStartLag"] = 0.1,
-		["HitboxEndLag"] = -0.2,
+		["HitboxEndLag"] = 0.2,
 		["EndLag"] = -0.1,
 		["SelfStun"] = {
-			["SlowFactor"] = 0.25
+			["SlowFactor"] = 0.22
 		},
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789890542",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0
@@ -78,10 +78,10 @@ local swings = {
 		["HitboxEndLag"] = -0.4,
 		["EndLag"] = -0.2,
 		["SelfStun"] = {
-			["SlowFactor"] = 1
+			["SlowFactor"] = .99
 		},
 		["Animation"] = {
-			["ID"] = "",
+			["ID"] = "rbxassetid://14789893257",
 			["Speed"] = 1,
 			["FadeTime"] = 0,
 			["Weight"] = 0
@@ -92,9 +92,9 @@ local swings = {
 				["SlowFactor"] = 0.5
 			},
 			["Knockback"] = {
-				["Duration"] = 0.5,
+				["Duration"] = 0.4,
 				["Direction"] = {"Front", -1},
-				["Force"] = 500
+				["Force"] = 25
 			},
 			["Ragdoll"] = {
 				["Duration"] = 1.2
@@ -157,13 +157,9 @@ SwordSwing.new = function(fields : {any?}?)
 					this.CanAttack = true
 				end)
 				
-				if this.Player ~= nil then
-					this.WeaponRemote:FireClient(this.Player, "PlayAnimation", "Swing" .. this.CurrentCombo)
-				else
-					-- WIP
-				end
+				this:PlayAnimation(this, "Swing" .. this.CurrentCombo)
 				if currentStats["SelfStun"] ~= nil then
-					task.spawn(this.ApplyStatus, this, "Stun", this.Owner, {
+					task.spawn(this.ApplyStatus, nil, this, "Stun", this.Owner, {
 						["SlowFactor"] = currentStats["SelfStun"]["SlowFactor"] or 0,
 						["Duration"] = realDuration,
 						["PlayNow"] = true
@@ -179,7 +175,7 @@ SwordSwing.new = function(fields : {any?}?)
 					if this.Blade ~= nil then
 						Hitbox.Position = this.Blade.Position
 						Hitbox.Shape = "Box"
-						Hitbox.Size = this.Blade.Size
+						Hitbox.Size = this.Blade.Size * 2
 						Hitbox.CopyCFrame = this.Blade
 					end
 					Hitbox.Pierce = currentStats["Pierce"] or 1
@@ -196,7 +192,10 @@ SwordSwing.new = function(fields : {any?}?)
 								for i2, v2 in pairs(v) do
 									argsTable[i2] = v2
 								end
-								task.spawn(this.ApplyStatus, this, i, this.Owner, argsTable)
+								if i == "Knockback" and this.Owner:FindFirstChild("HumanoidRootPart") then
+									argsTable["Origin"] = this.Owner.HumanoidRootPart.Position
+								end
+								task.spawn(this.ApplyStatus, nil, this, i, Humanoid.Parent, argsTable)
 							end
 						end
 					end)

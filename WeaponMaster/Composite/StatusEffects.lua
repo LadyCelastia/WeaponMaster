@@ -11,8 +11,8 @@ StatusEffects.new = function(fields : {any?}?)
 	
 	local self = setmetatable({}, StatusEffects)
 	
-	function self:ApplyStatus(this, ...) -- this : WeaponObject, Effect : string, Target : Model, Args : {any?}?
-		return this.StatusEffect:Invoke(...)
+	function self:ApplyStatus(this, cmd, owner, args)
+		return this.StatusEffectBindable:Invoke(cmd, owner, args)
 	end
 	
 	return self

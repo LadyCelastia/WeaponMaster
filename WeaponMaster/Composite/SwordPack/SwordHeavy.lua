@@ -14,7 +14,7 @@ local heavy = {
 		["SlowFactor"] = 1
 	},
 	["Animation"] = {
-		["ID"] = "",
+		["ID"] = "rbxassetid://14789877241",
 		["Speed"] = 1,
 		["FadeTime"] = 0,
 		["Weight"] = 0
@@ -25,9 +25,9 @@ local heavy = {
 			["SlowFactor"] = 0.5
 		},
 		["Knockback"] = {
-			["Duration"] = 0.5,
+			["Duration"] = 0.4,
 			["Direction"] = {"Front", -1},
-			["Force"] = 500
+			["Force"] = 25
 		},
 		["Ragdoll"] = {
 			["Duration"] = 1.2
@@ -59,7 +59,7 @@ SwordHeavy.new = function(fields : {any?}?)
 		this.HeavyAttack.Animation = nil
 	end
 	
-	function self:HeavyAttack(this)
+	function self:CriticalAttack(this)
 		if this.Owner ~= nil and this.CanAttack == true then
 			if this.Owner:FindFirstChild("Stun") == nil then
 				this.CanAttack = false
@@ -71,13 +71,9 @@ SwordHeavy.new = function(fields : {any?}?)
 					this.CanAttack = true
 				end)
 				
-				if this.Player ~= nil then
-					this.WeaponRemote:FireClient(this.Player, "PlayAnimation", "HeavyAttack")
-				else
-					-- WIP
-				end
+				this:PlayAnimation(this, "HeavyAttack")
 				if currentStats["SelfStun"] ~= nil then
-					task.spawn(this.ApplyStatus, this, "Stun", this.Owner, {
+					task.spawn(this.ApplyStatus, nil, this, "Stun", this.Owner, {
 						["SlowFactor"] = currentStats["SelfStun"]["SlowFactor"] or 0,
 						["Duration"] = realDuration,
 						["PlayNow"] = true
@@ -110,7 +106,10 @@ SwordHeavy.new = function(fields : {any?}?)
 								for i2, v2 in pairs(v) do
 									argsTable[i2] = v2
 								end
-								task.spawn(this.ApplyStatus, this, i, this.Owner, argsTable)
+								if i == "Knockback" and this.Owner:FindFirstChild("HumanoidRootPart") then
+									argsTable["Origin"] = this.Owner.HumanoidRootPart.Position
+								end
+								task.spawn(this.ApplyStatus, nil, this, i, this.Owner, argsTable)
 							end
 						end
 					end)

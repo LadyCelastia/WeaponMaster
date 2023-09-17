@@ -17,7 +17,7 @@ local library = {
 			},
 			["SwordSwing"] = {
 				["Damage"] = {8, 8, 6, 13},
-				["Duration"] = {1, 1, 0.6, 1.7},
+				["Duration"] = {.75, .8, 0.6, 1.7},
 			},
 			["SwordHeavy"] = {
 				["Pierce"] = 2
